@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+import math
+import random
 from enum import Enum, auto
 
 
@@ -10,17 +11,34 @@ class StepCondition(Enum):
     Player2Win = 2
 
 
-@dataclass
 class Pong:
-    bounds: list
-    p1_pos: float
-    p2_pos: float
-    ball_pos: list
-    ball_vel: list
-    ball_speed: float
-    ball_radius: float
-    pad_size: float
-    pad_speed: float
+    def __init__(self, width, height):
+        self.bounds = [width, height]
+        self.p1_pos = height / 2
+        self.p2_pos = height / 2
+        self.p1_score = 0
+        self.p2_score = 0
+        self.ball_speed = width / 110
+        self.ball_radius = width / 100
+        self.pad_size = height / 6
+        self.pad_speed = height / 60
+        self.set_random_ball()
+
+    def set_random_ball(self):
+        pos = [self.bounds[0] / 2, self.bounds[1] / 2]
+        initial_angle = random.uniform(math.pi / 6, math.pi / 4)
+        vel = [math.cos(initial_angle), math.sin(initial_angle)]
+        rand = random.getrandbits(1)
+        if rand & 1:
+            pos[0] += self.bounds[0] / 6
+            vel[0] *= -1
+        else:
+            pos[0] -= self.bounds[0] / 6
+        if rand & 2:
+            vel[1] *= -1
+
+        self.ball_pos = pos
+        self.ball_vel = vel
 
     # -1 = cima, 1 = baixo
     def play1(self, up_down):
@@ -36,22 +54,34 @@ class Pong:
         self.ball_pos[0] += self.ball_vel[0] * self.ball_speed
         self.ball_pos[1] += self.ball_vel[1] * self.ball_speed
 
-        if not (
-            0.0 <= self.ball_pos[1] - self.ball_radius
-            and self.ball_pos[1] + self.ball_radius <= self.bounds[1]
-        ):
-            self.ball_vel[1] = -self.ball_vel[1]
-
-        if self.ball_pos[0] - self.ball_radius < 0.0:
-            self.ball_vel[0] = -self.ball_vel[0]
-            if self.p1_pos <= self.ball_pos[1] <= (self.p1_pos + self.pad_size):
+        if self.ball_pos[0] - self.ball_radius <= 0.0:
+            if (
+                self.p1_pos - self.ball_radius
+                <= self.ball_pos[1]
+                <= self.p1_pos + self.pad_size + self.ball_radius
+            ):
+                # TODO recalcular vetor vel da bola ao inves de inverter x
+                self.ball_vel[0] = -self.ball_vel[0]
                 return StepCondition.Player1Hit
             else:
+                self.p2_score += 1
                 return StepCondition.Player2Win
-
-        if self.ball_pos[0] + self.ball_radius > self.bounds[0]:
-            self.ball_vel[0] = -self.ball_vel[0]
-            if self.p2_pos <= self.ball_pos[1] <= (self.p2_pos + self.pad_size):
+        elif self.ball_pos[0] + self.ball_radius >= self.bounds[0]:
+            if (
+                self.p2_pos - self.ball_radius
+                <= self.ball_pos[1]
+                <= self.p2_pos + self.pad_size + self.ball_radius
+            ):
+                # TODO recalcular vetor vel da bola ao inves de inverter x
+                self.ball_vel[0] = -self.ball_vel[0]
                 return StepCondition.Player2Hit
             else:
+                self.p1_score += 1
                 return StepCondition.Player1Win
+
+        elif not (
+            0.0 + self.ball_radius
+            <= self.ball_pos[1]
+            <= self.bounds[1] - self.ball_radius
+        ):
+            self.ball_vel[1] = -self.ball_vel[1]
