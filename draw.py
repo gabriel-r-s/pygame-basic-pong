@@ -80,10 +80,9 @@ if __name__ == "__main__":
         height = int(sys.argv[2])
         if width < 0 or height < 0:
             raise ValueError
+        WIDTH = width
+        HEIGHT = height
     except (ValueError, IndexError):
         pass
-
-    WIDTH = width
-    HEIGHT = width
 
     main()
