@@ -25,6 +25,7 @@ def main():
         ball_pos=[WIDTH / 2, HEIGHT / 2],
         ball_vel=[math.cos(initial_angle), math.sin(initial_angle)],
         ball_speed=5.0,
+        ball_radius=7.0,
         pad_size=HEIGHT / 5,
         pad_speed=10,
     )
@@ -47,7 +48,7 @@ def main():
 
         screen.fill((0, 0, 0))
         pg.draw.rect(screen, WHITE, pg.Rect(0, 0, WIDTH, HEIGHT), 1)
-        pg.draw.circle(screen, WHITE, pong.ball_pos, 10)
+        pg.draw.circle(screen, WHITE, pong.ball_pos, pong.ball_radius)
         pg.draw.rect(screen, WHITE, pg.Rect(0, pong.p1_pos, 5, pong.pad_size))
         pg.draw.rect(screen, WHITE, pg.Rect(WIDTH - 5, pong.p2_pos, 5, pong.pad_size))
         pg.display.flip()

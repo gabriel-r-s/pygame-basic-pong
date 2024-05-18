@@ -18,6 +18,7 @@ class Pong:
     ball_pos: list
     ball_vel: list
     ball_speed: float
+    ball_radius: float
     pad_size: float
     pad_speed: float
 
@@ -35,17 +36,20 @@ class Pong:
         self.ball_pos[0] += self.ball_vel[0] * self.ball_speed
         self.ball_pos[1] += self.ball_vel[1] * self.ball_speed
 
-        if not (0.0 <= self.ball_pos[1] <= self.bounds[1]):
+        if not (
+            0.0 <= self.ball_pos[1] - self.ball_radius
+            and self.ball_pos[1] + self.ball_radius <= self.bounds[1]
+        ):
             self.ball_vel[1] = -self.ball_vel[1]
 
-        if self.ball_pos[0] < 0.0:
+        if self.ball_pos[0] - self.ball_radius < 0.0:
             self.ball_vel[0] = -self.ball_vel[0]
             if self.p1_pos <= self.ball_pos[1] <= (self.p1_pos + self.pad_size):
                 return StepCondition.Player1Hit
             else:
                 return StepCondition.Player2Win
 
-        if self.ball_pos[0] > self.bounds[0]:
+        if self.ball_pos[0] + self.ball_radius > self.bounds[0]:
             self.ball_vel[0] = -self.ball_vel[0]
             if self.p2_pos <= self.ball_pos[1] <= (self.p2_pos + self.pad_size):
                 return StepCondition.Player2Hit
