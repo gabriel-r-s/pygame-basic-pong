@@ -1,3 +1,4 @@
+import sys
 import pygame as pg
 import pygame.freetype
 from pong import Pong, StepCondition
@@ -45,18 +46,18 @@ def main():
             WHITE,
             pg.Rect(WIDTH - PAD_WIDTH, pong.p2_pos, PAD_WIDTH, pong.pad_size),
         )
-        pg.draw.line(screen, WHITE, [WIDTH / 2, 0], [WIDTH / 2, HEIGHT])
+        pg.draw.line(screen, WHITE, (WIDTH / 2, 0), (WIDTH / 2, HEIGHT))
         font.render_to(
             screen,
             (WIDTH / 2 - WIDTH / 6, HEIGHT / 6),
             f"{pong.p1_score}",
-            (255, 255, 255),
+            WHITE,
         )
         font.render_to(
             screen,
-            (WIDTH / 2 + WIDTH / 6, HEIGHT / 6),
+            (WIDTH / 2 + WIDTH / 6 - 12, HEIGHT / 6),
             f"{pong.p2_score}",
-            (255, 255, 255),
+            WHITE,
         )
         pg.display.flip()
 
@@ -74,4 +75,15 @@ def main():
 
 
 if __name__ == "__main__":
+    try:
+        width = int(sys.argv[1])
+        height = int(sys.argv[2])
+        if width < 0 or height < 0:
+            raise ValueError
+    except (ValueError, IndexError):
+        pass
+
+    WIDTH = width
+    HEIGHT = width
+
     main()
