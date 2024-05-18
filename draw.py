@@ -5,6 +5,13 @@ import math
 import random
 
 
+def random_initial_angle():
+    initial_angle = random.uniform(-0.25 * math.pi, 0.25 * math.pi)
+    if random.getrandbits(1):
+        initial_angle = -initial_angle
+    return initial_angle
+
+
 def main():
     WIDTH = 800
     HEIGHT = 600
@@ -15,9 +22,7 @@ def main():
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     clock = pg.time.Clock()
 
-    initial_angle = random.uniform(-0.25 * math.pi, 0.25 * math.pi)
-    if random.getrandbits(1):
-        initial_angle = -initial_angle
+    initial_angle = random_initial_angle()
     pong = Pong(
         bounds=[WIDTH, HEIGHT],
         p1_pos=HEIGHT / 2,
@@ -37,6 +42,9 @@ def main():
                 running = False
 
         keys = pg.key.get_pressed()
+        if keys[pg.K_q]:
+            running = False
+
         if keys[pg.K_w]:
             pong.play1(-1)
         if keys[pg.K_s]:
@@ -55,11 +63,17 @@ def main():
 
         match pong.step():
             case StepCondition.Player1Win:
-                print("Player 1 Wins!")
-                running = False
+                pong.ball_pos = [WIDTH / 2, HEIGHT / 2]
+                initial_angle = random_initial_angle()
+                pong.ball_vel = [math.cos(initial_angle), math.sin(initial_angle)]
+                # pontos player 1 ++
+                pg.time.delay(1000)
             case StepCondition.Player2Win:
-                print("Player 2 Wins!")
-                running = False
+                pong.ball_pos = [WIDTH / 2, HEIGHT / 2]
+                initial_angle = random_initial_angle()
+                pong.ball_vel = [math.cos(initial_angle), math.sin(initial_angle)]
+                # pontos player 2 ++
+                pg.time.delay(1000)
 
         clock.tick(60)
 
