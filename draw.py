@@ -39,7 +39,17 @@ def main():
 
         screen.fill((0, 0, 0))
         pg.draw.rect(screen, WHITE, pg.Rect(0, 0, WIDTH, HEIGHT), 1)
-        pg.draw.circle(screen, WHITE, pong.ball_pos, pong.ball_radius)
+        pg.draw.rect(
+            screen,
+            WHITE,
+            pg.Rect(
+                (
+                    pong.ball_pos[0] - pong.ball_radius,
+                    pong.ball_pos[1] - pong.ball_radius,
+                ),
+                (pong.ball_radius, pong.ball_radius),
+            ),
+        )
         pg.draw.rect(screen, WHITE, pg.Rect(0, pong.p1_pos, PAD_WIDTH, pong.pad_size))
         pg.draw.rect(
             screen,
@@ -47,18 +57,21 @@ def main():
             pg.Rect(WIDTH - PAD_WIDTH, pong.p2_pos, PAD_WIDTH, pong.pad_size),
         )
         pg.draw.line(screen, WHITE, (WIDTH / 2, 0), (WIDTH / 2, HEIGHT))
+
         font.render_to(
             screen,
-            (WIDTH / 2 - WIDTH / 6, HEIGHT / 6),
-            f"{pong.p1_score}",
+            (0, 0),
+            f"{pong.p1_score:>2} : {pong.p2_score}",
             WHITE,
         )
+        elapsed = pg.time.get_ticks() // 1000
         font.render_to(
             screen,
-            (WIDTH / 2 + WIDTH / 6 - 12, HEIGHT / 6),
-            f"{pong.p2_score}",
+            (WIDTH - 120, 0),
+            f" {elapsed // 60:02} : {elapsed % 60:02}",
             WHITE,
         )
+
         pg.display.flip()
 
         match pong.step():
