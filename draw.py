@@ -18,6 +18,7 @@ def main():
     pong = Pong(WIDTH, HEIGHT)
     font = pg.freetype.Font("./F77MinecraftRegular-0VYv.ttf", 24)
 
+    condition = None
     running = True
     while running:
         for event in pg.event.get():
@@ -25,7 +26,7 @@ def main():
                 running = False
 
         keys = pg.key.get_pressed()
-        if keys[pg.K_q]:
+        if keys[pg.K_q] or keys[pg.K_ESCAPE]:
             running = False
 
         if keys[pg.K_w]:
@@ -38,49 +39,34 @@ def main():
             pong.play2(1)
 
         screen.fill((0, 0, 0))
+        # elementos do game
+        ball = pg.Rect(
+            (pong.ball_pos[0] - pong.ball_radius / 2, pong.ball_pos[1] - pong.ball_radius / 2),
+            (pong.ball_radius, pong.ball_radius),
+        )
+        pad1 = pg.Rect(0, pong.p1_pos, PAD_WIDTH, pong.pad_size)
+        pad2 = pg.Rect(WIDTH - PAD_WIDTH, pong.p2_pos, PAD_WIDTH, pong.pad_size)
+        pg.draw.rect(screen, WHITE, ball)
+        pg.draw.rect(screen, WHITE, pad1)
+        pg.draw.rect(screen, WHITE, pad2)
+        # decoracoes
         pg.draw.rect(screen, WHITE, pg.Rect(0, 0, WIDTH, HEIGHT), 1)
-        pg.draw.rect(
-            screen,
-            WHITE,
-            pg.Rect(
-                (
-                    pong.ball_pos[0] - pong.ball_radius,
-                    pong.ball_pos[1] - pong.ball_radius,
-                ),
-                (pong.ball_radius, pong.ball_radius),
-            ),
-        )
-        pg.draw.rect(screen, WHITE, pg.Rect(0, pong.p1_pos, PAD_WIDTH, pong.pad_size))
-        pg.draw.rect(
-            screen,
-            WHITE,
-            pg.Rect(WIDTH - PAD_WIDTH, pong.p2_pos, PAD_WIDTH, pong.pad_size),
-        )
         pg.draw.line(screen, WHITE, (WIDTH / 2, 0), (WIDTH / 2, HEIGHT))
-
-        font.render_to(
-            screen,
-            (10, 10),
-            f"{pong.p1_score:>2} : {pong.p2_score}",
-            WHITE,
-        )
+        font.render_to(screen, (10, 10), f"{pong.p1_score:>2} : {pong.p2_score}", WHITE)
         elapsed = pg.time.get_ticks() // 1000
-        font.render_to(
-            screen,
-            (WIDTH - 120, 10),
-            f" {elapsed // 60:02} : {elapsed % 60:02}",
-            WHITE,
-        )
+        font.render_to(screen, (WIDTH - 120, 10), f" {elapsed // 60:02} : {elapsed % 60:02}", WHITE)
 
         pg.display.flip()
 
-        match pong.step():
-            case StepCondition.Player1Win:
+        match condition:
+            case StepCondition.Player1Score:
                 pong.set_random_ball()
                 pg.time.delay(500)
-            case StepCondition.Player2Win:
+            case StepCondition.Player2Score:
                 pong.set_random_ball()
                 pg.time.delay(500)
+
+        condition = pong.step()
 
         clock.tick(60)
 

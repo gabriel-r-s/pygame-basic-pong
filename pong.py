@@ -4,16 +4,16 @@ from enum import Enum, auto
 
 
 class StepCondition(Enum):
-    Player1Win = -2
+    Player1Score = -2
     Player1Hit = -1
     Continue = 0
     Player2Hit = 1
-    Player2Win = 2
+    Player2Score = 2
 
 
 class Pong:
     def __init__(self, width, height):
-        self.reflect_angle = math.pi / 4
+        self.reflect_angle = math.pi * 3.5 / 12
         self.bounds = [width, height]
         self.p1_pos = height / 2
         self.p2_pos = height / 2
@@ -55,41 +55,34 @@ class Pong:
         self.ball_pos[0] += self.ball_vel[0] * self.ball_speed
         self.ball_pos[1] += self.ball_vel[1] * self.ball_speed
 
-        if self.ball_pos[0] - self.ball_radius <= 0.0 and self.ball_vel[0] < 0.0:
-            if (
-                self.p1_pos - self.ball_radius
-                <= self.ball_pos[1]
-                <= self.p1_pos + self.pad_size + self.ball_radius
-            ):
+        if self.ball_vel[0] < 0.0 and self.ball_pos[0] - self.ball_radius / 2 <= 0.0:
+            paddle_top = self.p1_pos - self.ball_radius / 2
+            paddle_bottom = self.p1_pos + self.pad_size + self.ball_radius / 2
+            if paddle_top <= self.ball_pos[1] <= paddle_bottom:
                 hit_rel_pos = (self.ball_pos[1] - self.p1_pos) / self.pad_size
                 ang = hit_rel_pos * 2 * self.reflect_angle - self.reflect_angle
                 self.ball_vel = [math.cos(ang), math.sin(ang)]
                 return StepCondition.Player1Hit
             else:
                 self.p2_score += 1
-                return StepCondition.Player2Win
-        elif (
-            self.ball_pos[0] + self.ball_radius >= self.bounds[0]
-            and self.ball_vel[0] > 0.0
-        ):
-            if (
-                self.p2_pos - self.ball_radius
-                <= self.ball_pos[1]
-                <= self.p2_pos + self.pad_size + self.ball_radius
-            ):
+                return StepCondition.Player2Score
+
+
+        if self.ball_vel[0] > 0.0 and self.ball_pos[0] + self.ball_radius / 2 >= self.bounds[0]:
+            paddle_top = self.p2_pos - self.ball_radius / 2
+            paddle_bottom = self.p2_pos + self.pad_size + self.ball_radius / 2
+            if paddle_top <= self.ball_pos[1] <= paddle_bottom:
                 hit_rel_pos = (self.ball_pos[1] - self.p2_pos) / self.pad_size
                 ang = hit_rel_pos * 2 * self.reflect_angle - self.reflect_angle
                 self.ball_vel = [-math.cos(ang), math.sin(ang)]
                 return StepCondition.Player2Hit
             else:
                 self.p1_score += 1
-                return StepCondition.Player1Win
+                return StepCondition.Player1Score
 
-        elif not (
-            0.0 + self.ball_radius
-            <= self.ball_pos[1]
-            <= self.bounds[1] - self.ball_radius
-        ):
-            self.ball_vel[1] = -self.ball_vel[1]
+        if self.ball_pos[1] - self.ball_radius / 2 < 0.0 and self.ball_vel[1] < 0.0:
+            self.ball_vel[1] *= -1.0
+        elif self.ball_pos[1] + self.ball_radius / 2 > self.bounds[1] and self.ball_vel[1] > 0.0:
+            self.ball_vel[1] *= -1.0
 
         return StepCondition.Continue
