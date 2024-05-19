@@ -58,6 +58,7 @@ class Pong:
         if self.ball_vel[0] < 0.0 and self.ball_pos[0] - self.ball_radius / 2 <= 0.0:
             paddle_top = self.p1_pos - self.ball_radius / 2
             paddle_bottom = self.p1_pos + self.pad_size + self.ball_radius / 2
+            self.ball_pos[0] = self.ball_radius / 2
             if paddle_top <= self.ball_pos[1] <= paddle_bottom:
                 hit_rel_pos = (self.ball_pos[1] - self.p1_pos) / self.pad_size
                 ang = hit_rel_pos * 2 * self.reflect_angle - self.reflect_angle
@@ -71,6 +72,7 @@ class Pong:
         if self.ball_vel[0] > 0.0 and self.ball_pos[0] + self.ball_radius / 2 >= self.bounds[0]:
             paddle_top = self.p2_pos - self.ball_radius / 2
             paddle_bottom = self.p2_pos + self.pad_size + self.ball_radius / 2
+            self.ball_pos[0] = self.bounds[0] - self.ball_radius / 2
             if paddle_top <= self.ball_pos[1] <= paddle_bottom:
                 hit_rel_pos = (self.ball_pos[1] - self.p2_pos) / self.pad_size
                 ang = hit_rel_pos * 2 * self.reflect_angle - self.reflect_angle
