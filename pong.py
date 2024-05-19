@@ -91,3 +91,5 @@ class Pong:
             <= self.bounds[1] - self.ball_radius
         ):
             self.ball_vel[1] = -self.ball_vel[1]
+
+        return StepCondition.Continue
