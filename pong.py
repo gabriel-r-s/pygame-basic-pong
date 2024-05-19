@@ -24,6 +24,7 @@ class Pong:
         self.pad_size = height / 6
         self.pad_speed = height / 60
         self.set_random_ball()
+        self.condition = StepCondition.Continue
 
     def set_random_ball(self):
         pos = [self.bounds[0] / 2, self.bounds[1] / 2]
@@ -52,8 +53,11 @@ class Pong:
         self.p2_pos = max(0, min(self.p2_pos, self.bounds[1] - self.pad_size))
 
     def step(self) -> StepCondition:
-        self.ball_pos[0] += self.ball_vel[0] * self.ball_speed
-        self.ball_pos[1] += self.ball_vel[1] * self.ball_speed
+        if self.condition == StepCondition.Player1Score or self.condition == StepCondition.Player2Score:
+            self.set_random_ball()
+        else:
+            self.ball_pos[0] += self.ball_vel[0] * self.ball_speed
+            self.ball_pos[1] += self.ball_vel[1] * self.ball_speed
 
         if self.ball_vel[0] < 0.0 and self.ball_pos[0] - self.ball_radius / 2 <= 0.0:
             paddle_top = self.p1_pos - self.ball_radius / 2
@@ -63,11 +67,13 @@ class Pong:
                 hit_rel_pos = (self.ball_pos[1] - self.p1_pos) / self.pad_size
                 ang = hit_rel_pos * 2 * self.reflect_angle - self.reflect_angle
                 self.ball_vel = [math.cos(ang), math.sin(ang)]
-                return StepCondition.Player1Hit
+                self.condition = StepCondition.Player1Hit
+                return
             else:
                 self.p2_score += 1
-                return StepCondition.Player2Score
-
+                self.set_random_ball()
+                self.condition = StepCondition.Player2Score
+                return
 
         if self.ball_vel[0] > 0.0 and self.ball_pos[0] + self.ball_radius / 2 >= self.bounds[0]:
             paddle_top = self.p2_pos - self.ball_radius / 2
@@ -77,14 +83,17 @@ class Pong:
                 hit_rel_pos = (self.ball_pos[1] - self.p2_pos) / self.pad_size
                 ang = hit_rel_pos * 2 * self.reflect_angle - self.reflect_angle
                 self.ball_vel = [-math.cos(ang), math.sin(ang)]
-                return StepCondition.Player2Hit
+                self.condition = StepCondition.Player2Hit
+                return
             else:
                 self.p1_score += 1
-                return StepCondition.Player1Score
+                self.set_random_ball()
+                self.condition = StepCondition.Player1Score
+                return
 
         if self.ball_pos[1] - self.ball_radius / 2 < 0.0 and self.ball_vel[1] < 0.0:
             self.ball_vel[1] *= -1.0
         elif self.ball_pos[1] + self.ball_radius / 2 > self.bounds[1] and self.ball_vel[1] > 0.0:
             self.ball_vel[1] *= -1.0
 
-        return StepCondition.Continue
+        self.condition = StepCondition.Continue
