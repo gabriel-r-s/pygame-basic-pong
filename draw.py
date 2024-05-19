@@ -60,14 +60,14 @@ def main():
 
         font.render_to(
             screen,
-            (0, 0),
+            (10, 10),
             f"{pong.p1_score:>2} : {pong.p2_score}",
             WHITE,
         )
         elapsed = pg.time.get_ticks() // 1000
         font.render_to(
             screen,
-            (WIDTH - 120, 0),
+            (WIDTH - 120, 10),
             f" {elapsed // 60:02} : {elapsed % 60:02}",
             WHITE,
         )
