@@ -6,13 +6,14 @@ from pong import Pong, StepCondition
 
 WIDTH = 800
 HEIGHT = 600
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+BLACK = pg.Color(0, 0, 0)
+WHITE = pg.Color(255, 255, 255)
 PAD_WIDTH = 5
 
 
 def main():
     pg.init()
+    pygame.display.set_caption("Pong!")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     clock = pg.time.Clock()
     pong = Pong(WIDTH, HEIGHT)
