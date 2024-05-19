@@ -38,10 +38,12 @@ def main():
         if keys[pg.K_DOWN] or keys[pg.K_j]:
             pong.play2(1)
 
-        screen.fill((0, 0, 0))
+        condition = pong.step()
+
+        screen.fill(BLACK)
         # elementos do game
         ball = pg.Rect(
-            (pong.ball_pos[0] - pong.ball_radius / 2, pong.ball_pos[1] - pong.ball_radius / 2),
+            pong.ball_pos,
             (pong.ball_radius, pong.ball_radius),
         )
         pad1 = pg.Rect(0, pong.p1_pos, PAD_WIDTH, pong.pad_size)
@@ -57,7 +59,6 @@ def main():
         font.render_to(screen, (WIDTH - 120, 10), f" {elapsed // 60:02} : {elapsed % 60:02}", WHITE)
         pg.display.flip()
 
-        condition = pong.step()
         if condition == StepCondition.Player1Score or condition == StepCondition.Player2Score:
             pg.time.delay(500)
 
