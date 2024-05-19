@@ -60,36 +60,36 @@ class Pong:
             self.ball_pos[1] += self.ball_vel[1] * self.ball_speed
 
         if self.ball_vel[0] < 0.0 and self.ball_pos[0] - self.ball_radius / 2 <= 0.0:
+            self.ball_pos[0] = self.ball_radius / 2
             paddle_top = self.p1_pos - self.ball_radius / 2
             paddle_bottom = self.p1_pos + self.pad_size + self.ball_radius / 2
-            self.ball_pos[0] = self.ball_radius / 2
             if paddle_top <= self.ball_pos[1] <= paddle_bottom:
                 hit_rel_pos = (self.ball_pos[1] - self.p1_pos) / self.pad_size
                 ang = hit_rel_pos * 2 * self.reflect_angle - self.reflect_angle
                 self.ball_vel = [math.cos(ang), math.sin(ang)]
                 self.condition = StepCondition.Player1Hit
-                return
+                return self.condition
             else:
                 self.p2_score += 1
                 self.set_random_ball()
                 self.condition = StepCondition.Player2Score
-                return
+                return self.condition
 
         if self.ball_vel[0] > 0.0 and self.ball_pos[0] + self.ball_radius / 2 >= self.bounds[0]:
+            self.ball_pos[0] = self.bounds[0] - self.ball_radius / 2
             paddle_top = self.p2_pos - self.ball_radius / 2
             paddle_bottom = self.p2_pos + self.pad_size + self.ball_radius / 2
-            self.ball_pos[0] = self.bounds[0] - self.ball_radius / 2
             if paddle_top <= self.ball_pos[1] <= paddle_bottom:
                 hit_rel_pos = (self.ball_pos[1] - self.p2_pos) / self.pad_size
                 ang = hit_rel_pos * 2 * self.reflect_angle - self.reflect_angle
                 self.ball_vel = [-math.cos(ang), math.sin(ang)]
                 self.condition = StepCondition.Player2Hit
-                return
+                return self.condition
             else:
                 self.p1_score += 1
                 self.set_random_ball()
                 self.condition = StepCondition.Player1Score
-                return
+                return self.condition
 
         if self.ball_pos[1] - self.ball_radius / 2 < 0.0 and self.ball_vel[1] < 0.0:
             self.ball_vel[1] *= -1.0
@@ -97,3 +97,4 @@ class Pong:
             self.ball_vel[1] *= -1.0
 
         self.condition = StepCondition.Continue
+        return self.condition

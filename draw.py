@@ -19,7 +19,6 @@ def main():
     pong = Pong(WIDTH, HEIGHT)
     font = pg.freetype.Font("./F77MinecraftRegular-0VYv.ttf", 24)
 
-    condition = None
     running = True
     while running:
         for event in pg.event.get():
@@ -58,8 +57,8 @@ def main():
         font.render_to(screen, (WIDTH - 120, 10), f" {elapsed // 60:02} : {elapsed % 60:02}", WHITE)
         pg.display.flip()
 
-        pong.step()
-        if pong.condition == StepCondition.Player1Score or pong.condition == StepCondition.Player2Score:
+        condition = pong.step()
+        if condition == StepCondition.Player1Score or condition == StepCondition.Player2Score:
             pg.time.delay(500)
 
         clock.tick(60)
@@ -68,14 +67,4 @@ def main():
 
 
 if __name__ == "__main__":
-    try:
-        width = int(sys.argv[1])
-        height = int(sys.argv[2])
-        if width < 0 or height < 0:
-            raise ValueError
-        WIDTH = width
-        HEIGHT = height
-    except (ValueError, IndexError):
-        pass
-
     main()
