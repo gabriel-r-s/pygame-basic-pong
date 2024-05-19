@@ -56,14 +56,11 @@ def main():
         font.render_to(screen, (10, 10), f"{pong.p1_score:>2} : {pong.p2_score}", WHITE)
         elapsed = pg.time.get_ticks() // 1000
         font.render_to(screen, (WIDTH - 120, 10), f" {elapsed // 60:02} : {elapsed % 60:02}", WHITE)
-
         pg.display.flip()
 
-        match condition:
-            case StepCondition.Player1Score | StepCondition.Player2Score:
-                pong.set_random_ball()
-                pg.time.delay(500)
-
+        if condition == StepCondition.Player1Score or condition == StepCondition.Player2Score:
+            pong.set_random_ball()
+            pg.time.delay(500)
         condition = pong.step()
 
         clock.tick(60)
