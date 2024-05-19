@@ -60,10 +60,7 @@ def main():
         pg.display.flip()
 
         match condition:
-            case StepCondition.Player1Score:
-                pong.set_random_ball()
-                pg.time.delay(500)
-            case StepCondition.Player2Score:
+            case StepCondition.Player1Score | StepCondition.Player2Score:
                 pong.set_random_ball()
                 pg.time.delay(500)
 
